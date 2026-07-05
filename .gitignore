@@ -4,3 +4,4 @@
 
 # Oracle run log — ephemeral, for debugging only.
 .oracle-run.log
+skills-lock.json

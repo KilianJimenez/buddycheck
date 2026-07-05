@@ -1,0 +1,9 @@
+<project version="4">
+  <component name="KubernetesApiPersistence">{}</component>
+  <component name="KubernetesApiProvider">{
+  &quot;isMigrated&quot;: true
+}</component>
+  <component name="ProjectRootManager" version="2">
+    <output url="file://$PROJECT_DIR$/out" />
+  </component>
+</project>

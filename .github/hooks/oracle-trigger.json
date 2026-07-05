@@ -1,0 +1,13 @@
+{
+  "version": 1,
+  "hooks": {
+    "agentStop": [
+      {
+        "type": "command",
+        "bash": ".github/hooks/scripts/trigger-oracle.sh",
+        "cwd": ".",
+        "timeoutSec": 10
+      }
+    ]
+  }
+}

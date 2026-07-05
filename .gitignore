@@ -1,0 +1,6 @@
+# Transient coder sentinel — created by the coder agent on task completion,
+# consumed and deleted by the agentStop hook that triggers oracle.
+.coder-done
+
+# Oracle run log — ephemeral, for debugging only.
+.oracle-run.log

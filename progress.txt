@@ -36,3 +36,26 @@ The requested review standard is PRD compliance, but there are no usable require
 ---
 
 [2026-07-10T14:21:56Z] Task: Oracle agent - review against the GitHub Issue (issue #3). Branch: feat/migrate-task-source-to-github-issues. Summary: Updated .github/agents/oracle.agent.md to read task.md (the GitHub issue snapshot) instead of PRD.md, compare the branch diff against the issue's acceptance criteria, and post the structured review both as a comment on the issue (gh issue comment <n>, issue number from task.md) and appended to progress.txt. Changed "Do not modify PRD.md" to "Do not modify task.md". Updated .github/hooks/scripts/trigger-oracle.sh prompt to reference @task.md and reworded to review against the GitHub issue and comment on it. No stray PRD.md references remain in either file.
+
+---
+## Oracle Review — Oracle agent: review against the GitHub Issue (feat/migrate-task-source-to-github-issues) — 2026-07-10
+
+### Verdict: PASS
+
+### Requirement Checklist
+- ✅ `oracle.agent.md` description and step 1 reference `task.md` / the GitHub issue, not `PRD.md`: Updated in both metadata description and workflow step 1.
+- ✅ Oracle compares the diff against the issue's requirements: Workflow step 3 explicitly requires requirement-by-requirement comparison against issue criteria.
+- ✅ Oracle posts its review as an issue comment (`gh issue comment <n>`) using the issue number from `task.md`: Workflow step 4 includes explicit `gh issue comment <n>` instruction tied to `task.md` issue number.
+- ✅ Oracle still appends the review to `progress.txt`: Workflow step 4 explicitly requires appending the same review to `progress.txt`.
+- ✅ `Do not modify PRD.md` rule becomes `Do not modify task.md`: Rules section updated accordingly.
+- ✅ `trigger-oracle.sh` prompt uses `@task.md` and reworded wording (no `@PRD.md`): Hook now invokes oracle with `@task.md @progress.txt` prompt phrased against the GitHub issue in `task.md`.
+- ✅ No stray `PRD.md` / "Read the PRD" references remain in `oracle.agent.md` or `trigger-oracle.sh`: Current file contents contain no remaining matches.
+
+### Summary
+The branch implementation satisfies all listed acceptance criteria for issue #3. The oracle agent instructions now correctly source requirements from `task.md`, evaluate branch changes against issue requirements, and publish output to both the issue and `progress.txt`. The trigger hook prompt is aligned with the issue-based workflow and no legacy PRD references remain in the required files.
+
+### Recommendations
+None.
+---
+
+[2026-07-10T14:24:26Z] Task: Add 'Ralph - Once' GitHub Actions workflow (issue #4). Branch: feat/migrate-task-source-to-github-issues. Summary: Added .github/workflows/ralph-once.yml, named "Ralph - Once", triggered only via workflow_dispatch. It checks out the repo, sets up Node.js, installs the GitHub Copilot CLI (npm install -g @github/copilot), and runs bash ralph-once.sh. GITHUB_TOKEN/GH_TOKEN wire up gh for issue operations; COPILOT_CLI_TOKEN is documented in the workflow's header comment as a required repo secret. Validated the workflow YAML parses correctly.

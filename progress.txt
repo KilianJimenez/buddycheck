@@ -18,3 +18,21 @@ There is no actionable requirement specification in `PRD.md` to compare implemen
 ---
 
 [2026-07-10T14:19:14Z] Task: Coder agent - GitHub Issues workflow + TDD skill (issue #2). Branch: feat/migrate-task-source-to-github-issues. Summary: Rewrote .github/agents/coder.agent.md to read task.md (the GitHub issue snapshot) instead of PRD.md, added a step to claim the issue via `gh issue edit <n> --add-assignee @me`, and updated the implementation step to follow the tdd skill's red->green loop (one seam/test/minimal-impl per vertical slice, tests actually run each cycle, seams documented in commit message/issue comment since the agent runs AFK). Relaxed the "do not run tests" rule since TDD tests are now expected. Added a step to comment the branch name and progress summary on the issue when done. Changed "Do not modify PRD.md" to "Do not modify task.md". Kept .coder-done as the final action (oracle hook preserved). No stray PRD.md references remain in coder.agent.md.
+---
+## Oracle Review — Coder agent - GitHub Issues workflow + TDD skill (feat/migrate-task-source-to-github-issues) — 2026-07-10
+
+### Verdict: FAIL
+
+### Requirement Checklist
+- ❌ PRD-defined task requirements: `PRD.md` provides no requirements to validate (the branch diff shows it as an empty file removed from tracking), so there is no authoritative spec to assess compliance against.
+- ⚠️ Alignment with stated task intent in progress log: The branch changes to `.github/agents/coder.agent.md`, `ralph-once.sh`, and `.gitignore` are consistent with the issue-based workflow/TDD narrative, but this cannot substitute for PRD-based verification.
+
+### Summary
+The requested review standard is PRD compliance, but there are no usable requirements in `PRD.md` for this task. Implementation appears directionally consistent with the logged objective, yet objective pass/fail against PRD requirements is not possible. Under a strict PRD-based oracle review, this task cannot be marked as passing.
+
+### Recommendations
+- Add explicit requirements for this task to `PRD.md` (expected coder workflow, issue-claim behavior, TDD constraints, and required outputs).
+- Re-run oracle review once PRD requirements exist so each requirement can be validated directly against the branch diff.
+---
+
+[2026-07-10T14:21:56Z] Task: Oracle agent - review against the GitHub Issue (issue #3). Branch: feat/migrate-task-source-to-github-issues. Summary: Updated .github/agents/oracle.agent.md to read task.md (the GitHub issue snapshot) instead of PRD.md, compare the branch diff against the issue's acceptance criteria, and post the structured review both as a comment on the issue (gh issue comment <n>, issue number from task.md) and appended to progress.txt. Changed "Do not modify PRD.md" to "Do not modify task.md". Updated .github/hooks/scripts/trigger-oracle.sh prompt to reference @task.md and reworded to review against the GitHub issue and comment on it. No stray PRD.md references remain in either file.

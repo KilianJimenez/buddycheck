@@ -28,6 +28,8 @@ cat > task.md <<EOF
 ${body}
 EOF
 
+touch progress.txt
+
 copilot \
   --agent=coder \
   --allow-all-tools \

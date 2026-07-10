@@ -23,7 +23,7 @@ rm -f "$SENTINEL"
 copilot \
   --agent=oracle \
   --allow-all-tools \
-  -p "@PRD.md @progress.txt Review the current branch changes against PRD.md requirements and append your oracle review to progress.txt" \
+  -p "@task.md @progress.txt Review the current branch changes against the GitHub issue in task.md, post your review as a comment on that issue, and append your oracle review to progress.txt" \
   >> .oracle-run.log 2>&1 &
 
 echo "Oracle agent launched (PID $!)." >&2

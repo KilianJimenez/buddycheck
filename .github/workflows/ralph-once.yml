@@ -1,0 +1,39 @@
+name: Ralph - Once
+
+# Manually triggered only — runs one pass of ralph-once.sh, which picks the
+# highest-priority `ready-for-agent` GitHub issue and hands it to the coder
+# agent.
+#
+# Required repository secrets:
+#   - COPILOT_CLI_TOKEN: a GitHub Copilot CLI auth token (personal access
+#     token or Copilot token) used to authenticate `copilot` non-interactively.
+#     The default GITHUB_TOKEN is used for `gh` operations (issue listing,
+#     assigning, commenting) and does not need to be set manually.
+on:
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+  issues: write
+
+jobs:
+  ralph-once:
+    runs-on: ubuntu-latest
+    env:
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      COPILOT_CLI_TOKEN: ${{ secrets.COPILOT_CLI_TOKEN }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Install GitHub Copilot CLI
+        run: npm install -g @github/copilot
+
+      - name: Run ralph-once.sh
+        run: bash ralph-once.sh

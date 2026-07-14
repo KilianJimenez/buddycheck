@@ -62,7 +62,7 @@ Compose a structured review in this format:
     - **Related Tests**: a clickable GitHub permalink (same format) to the test(s) covering that criterion. Never paste code inline.
     - **Status**: ✅ / ❌ / ⚠️ matching the requirement checklist.
   - **Summary** and **Recommendations**: reuse the content from step 4.
-  - The two collapsible `<details>` sections: embed the full, current contents of `progress.txt` and of the oracle run log (`.oracle-run.log`, written by `.github/hooks/scripts/trigger-oracle.sh`) verbatim inside `<details>` blocks, since both files are gitignored/ephemeral and can't be attached as binary files.
+  - The two collapsible `<details>` sections: embed the full, current contents of `progress.txt` and of the oracle run log (`.oracle-run.log`, written by `ralph-once.sh` when it runs the oracle step) verbatim inside `<details>` blocks, since both files are gitignored/ephemeral and can't be attached as binary files.
 - If no PR exists for the branch yet, create one: `gh pr create --head <branch-name> --base main --title "<task name>" --body-file <tmp-file-with-rendered-body>`.
 - If a PR already exists for the branch, update it in place instead of creating a duplicate: `gh pr edit <number> --body-file <tmp-file-with-rendered-body>` (and `--title` if it changed). This makes PR creation idempotent across repeated oracle runs on the same branch.
 

@@ -30,7 +30,36 @@ EOF
 
 touch progress.txt
 
+# Step 1 — coder: implement the selected issue on a feature branch. The coder
+# agent signals completion by creating the `.coder-done` sentinel file as its
+# last action (see .github/agents/coder.agent.md).
 copilot \
   --agent=coder \
   --allow-all-tools \
-  -p "@task.md @progress.txt 1. Read the task and progress file. 2. Implement the task. 3. Commit your changes. 4. Update progress.txt with what you did. ONLY DO ONE TASK AT A TIME."
+  -p "@task.md @progress.txt 1. Read the task and progress file. 2. Implement the task. 3. Commit your changes. 4. Update progress.txt with what you did. ONLY DO ONE TASK AT A TIME." \
+  || echo "coder agent exited non-zero; continuing to oracle gate." >&2
+
+# Step 2 — oracle: review the coder's work and always open/update a PR.
+#
+# This is invoked here as an explicit foreground step (rather than via an
+# agentStop hook) so it runs reliably in CI: repo hooks in .github/hooks/ only
+# load once the working folder is trusted, and a backgrounded hook process
+# would be killed when the workflow job ends. Running oracle synchronously in
+# the same job avoids both problems.
+SENTINEL=".coder-done"
+
+if [ ! -f "$SENTINEL" ]; then
+  echo "No '$SENTINEL' sentinel — coder did not finish a task. Skipping oracle."
+  exit 0
+fi
+
+# Consume the sentinel so oracle runs exactly once per coder completion.
+rm -f "$SENTINEL"
+
+# Run oracle in the foreground, teeing its output to .oracle-run.log so the
+# agent can embed the run log in the pull request it opens/updates.
+copilot \
+  --agent=oracle \
+  --allow-all-tools \
+  -p "@task.md @progress.txt Review the current branch changes against the GitHub issue in task.md, post your review as a comment on that issue, append your oracle review to progress.txt, and always open or update a pull request for this branch with the acceptance-criteria mapping and embedded run artifacts, regardless of verdict" \
+  2>&1 | tee .oracle-run.log

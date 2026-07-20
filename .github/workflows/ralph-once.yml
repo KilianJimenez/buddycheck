@@ -7,8 +7,9 @@ name: Ralph - Once
 # Required repository secrets:
 #   - COPILOT_CLI_TOKEN: a GitHub Copilot CLI auth token (personal access
 #     token or Copilot token) used to authenticate `copilot` non-interactively.
-#     The default GITHUB_TOKEN is used for `gh` operations (issue listing,
-#     assigning, commenting) and does not need to be set manually.
+#   - GH_PAT: a classic Personal Access Token with `repo` + `workflow` scopes.
+#     Required so the coder agent can push commits that touch .github/workflows/.
+#     GITHUB_TOKEN is intentionally blocked from that scope by GitHub.
 on:
   workflow_dispatch: {}
 
@@ -21,12 +22,20 @@ jobs:
   ralph-once:
     runs-on: ubuntu-latest
     env:
-      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      GITHUB_TOKEN: ${{ secrets.GH_PAT }}
+      GH_TOKEN: ${{ secrets.GH_PAT }}
       COPILOT_GITHUB_TOKEN: ${{ secrets.COPILOT_CLI_TOKEN }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GH_PAT }}
+
+      - name: Configure git credentials
+        run: |
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git config --global user.name "github-actions[bot]"
+          git remote set-url origin "https://x-access-token:${{ secrets.GH_PAT }}@github.com/${{ github.repository }}.git"
 
       - name: Set up Node.js
         uses: actions/setup-node@v4

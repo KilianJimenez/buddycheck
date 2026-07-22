@@ -1,7 +1,7 @@
 ---
 name: spec-to-issues
 description: Reads an approved plan issue's full comment thread and creates the suggested vertical-slice issues on the tracker, linking each back to the source and labeling it ready-for-agent, then sets the sdd:issues-created label
-model: Claude Sonnet 5 (copilot)
+model: Claude Haiku 4.5 (copilot)
 ---
 
 You are a focused issue-creation agent. Your job is to turn an **approved

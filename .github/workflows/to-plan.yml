@@ -1,0 +1,48 @@
+name: SDD - To Plan
+
+# Comment-triggered SDD command: `!to-plan` turns a grilled idea into a
+# concrete plan plus a set of suggested vertical-slice follow-up issues (not
+# yet created), posted as a comment on the same issue thread.
+#
+# Trigger guard: the comment author must be exactly `KilianJimenez` and the
+# comment body must start with `!to-plan` (see docs/agents/sdd-workflow.md).
+#
+# Required repository secrets:
+#   - COPILOT_CLI_TOKEN: a GitHub Copilot CLI auth token (personal access
+#     token or Copilot token) used to authenticate `copilot` non-interactively.
+on:
+  issue_comment:
+    types: [created]
+
+permissions:
+  issues: write
+  contents: read
+
+jobs:
+  to-plan:
+    if: |
+      github.event.comment.user.login == 'KilianJimenez' &&
+      startsWith(github.event.comment.body, '!to-plan')
+    runs-on: ubuntu-latest
+    env:
+      COPILOT_GITHUB_TOKEN: ${{ secrets.COPILOT_CLI_TOKEN }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Install GitHub Copilot CLI
+        run: npm install -g @github/copilot
+
+      - name: Run spec-planner agent
+        env:
+          ISSUE_NUMBER: ${{ github.event.issue.number }}
+        run: |
+          copilot \
+            --agent=spec-planner \
+            --allow-all-tools \
+            -p "Read issue #${ISSUE_NUMBER} and its full comment thread. Post a single comment on issue #${ISSUE_NUMBER} containing a concrete design/implementation plan plus a set of suggested vertical-slice issues (described, not yet created), and set the sdd:planned label on issue #${ISSUE_NUMBER} (removing any other sdd:* label)."

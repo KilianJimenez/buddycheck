@@ -3,7 +3,7 @@ name: SDD - To Issues
 # Comment-triggered SDD command: `!to-issues` turns an approved plan (posted
 # by the `!to-plan` step) into real, linked GitHub issues.
 #
-# Trigger guard: the comment author must be exactly `KilianJimenez` and the
+# Trigger guard: the comment author must be exactly `{{OWNER}}` and the
 # comment body must start with `!to-issues` (see .buddy/docs/sdd-workflow.md).
 #
 # Required repository secrets:
@@ -20,7 +20,7 @@ permissions:
 jobs:
   to-issues:
     if: |
-      github.event.comment.user.login == 'KilianJimenez' &&
+      github.event.comment.user.login == '{{OWNER}}' &&
       startsWith(github.event.comment.body, '!to-issues')
     runs-on: ubuntu-latest
     env:

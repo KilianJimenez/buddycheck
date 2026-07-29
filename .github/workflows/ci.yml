@@ -1,0 +1,92 @@
+name: CI
+
+# Package CI for the `buddycheck` npm CLI itself (NOT a scaffolded template).
+# Builds the CLI, runs lint + unit tests, then scaffolds a throwaway repo with
+# `buddycheck init` and verifies the generated layout with the structural
+# tests in tests/structural/.
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  build-test:
+    name: Build and test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build
+        run: npm run build
+
+      - name: Lint (tsc --noEmit)
+        run: npm run lint
+
+      - name: Unit tests
+        run: npm test
+
+      - name: E2E scaffold into a temp repo
+        run: |
+          set -euo pipefail
+          TMP="$(mktemp -d)"
+          echo "TMP=$TMP" >> "$GITHUB_ENV"
+          git init -q "$TMP"
+          cd "$TMP"
+          git config user.email ci@example.com
+          git config user.name "CI"
+          node "$GITHUB_WORKSPACE/dist/index.js" init \
+            --yes \
+            --owner testowner \
+            --repo testowner/testrepo \
+            --no-labels
+          echo "--- generated tree ---"
+          find . -path ./.git -prune -o -type f -print | sort
+
+      - name: Structural tests against the scaffolded repo
+        env:
+          EXPECTED_OWNER: testowner
+        run: bash tests/structural/run-against.sh "$TMP"
+
+      - name: Guard against legacy branding in shipped sources
+        run: |
+          set -euo pipefail
+          if grep -rniE 'ralph|kilianjimenez' templates/ src/; then
+            echo "::error::Legacy branding (ralph/KilianJimenez) found in templates/ or src/"
+            exit 1
+          fi
+          echo "No legacy branding found."
+
+      - name: Verify npm tarball contents
+        run: |
+          set -euo pipefail
+          npm pack --dry-run --json > pack.json
+          node -e '
+            const pack = JSON.parse(require("fs").readFileSync("pack.json", "utf8"));
+            const files = pack.flatMap((p) => (p.files || []).map((f) => f.path));
+            const required = ["dist/index.js", "README.md"];
+            const missing = required.filter((f) => !files.includes(f));
+            if (!files.some((f) => f.startsWith("templates/"))) {
+              missing.push("templates/**");
+            }
+            if (missing.length) {
+              console.error("Missing from tarball: " + missing.join(", "));
+              console.error("Tarball contains:\n" + files.join("\n"));
+              process.exit(1);
+            }
+            console.log("Tarball contains " + files.length + " files, including dist/index.js and templates/.");
+          '
+          rm -f pack.json

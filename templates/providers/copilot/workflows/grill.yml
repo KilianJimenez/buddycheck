@@ -4,7 +4,7 @@ name: SDD - Grill
 # issue — posting clarifying questions, sharpened scope, and surfaced
 # assumptions as a comment.
 #
-# Trigger guard: the comment author must be exactly `KilianJimenez` and the
+# Trigger guard: the comment author must be exactly `{{OWNER}}` and the
 # comment body must start with `!grill` (see .buddy/docs/sdd-workflow.md).
 #
 # Required repository secrets:
@@ -21,7 +21,7 @@ permissions:
 jobs:
   grill:
     if: |
-      github.event.comment.user.login == 'KilianJimenez' &&
+      github.event.comment.user.login == '{{OWNER}}' &&
       startsWith(github.event.comment.body, '!grill')
     runs-on: ubuntu-latest
     env:

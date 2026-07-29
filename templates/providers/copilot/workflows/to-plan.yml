@@ -4,7 +4,7 @@ name: SDD - To Plan
 # concrete plan plus a set of suggested vertical-slice follow-up issues (not
 # yet created), posted as a comment on the same issue thread.
 #
-# Trigger guard: the comment author must be exactly `KilianJimenez` and the
+# Trigger guard: the comment author must be exactly `{{OWNER}}` and the
 # comment body must start with `!to-plan` (see .buddy/docs/sdd-workflow.md).
 #
 # Required repository secrets:
@@ -21,7 +21,7 @@ permissions:
 jobs:
   to-plan:
     if: |
-      github.event.comment.user.login == 'KilianJimenez' &&
+      github.event.comment.user.login == '{{OWNER}}' &&
       startsWith(github.event.comment.body, '!to-plan')
     runs-on: ubuntu-latest
     env:

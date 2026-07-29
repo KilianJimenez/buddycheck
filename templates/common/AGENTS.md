@@ -2,7 +2,7 @@
 
 ### Issue tracker
 
-Issues live in GitHub Issues (`KilianJimenez/buddycheck`); external PRs are not a triage surface. See `.buddy/docs/issue-tracker.md`.
+Issues live in GitHub Issues (`{{REPO_SLUG}}`); external PRs are not a triage surface. See `.buddy/docs/issue-tracker.md`.
 
 ### Triage labels
 

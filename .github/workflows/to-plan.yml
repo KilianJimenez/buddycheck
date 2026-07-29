@@ -5,7 +5,7 @@ name: SDD - To Plan
 # yet created), posted as a comment on the same issue thread.
 #
 # Trigger guard: the comment author must be exactly `KilianJimenez` and the
-# comment body must start with `!to-plan` (see docs/agents/sdd-workflow.md).
+# comment body must start with `!to-plan` (see .buddy/docs/sdd-workflow.md).
 #
 # Required repository secrets:
 #   - COPILOT_CLI_TOKEN: a GitHub Copilot CLI auth token (personal access

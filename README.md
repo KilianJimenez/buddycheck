@@ -3,7 +3,7 @@
 # BuddyCheck
 **The most powerful and modular AI engine for content creation.**
 
-<img width="424" height="212" alt="BuddyCheck avatar" src="/Users/kilian.jimenez/Documents/PersonalProjects/buddycheck/attachments/buddycheck.jpg" />
+<img width="424" height="212" alt="BuddyCheck avatar" src="https://github.com/user-attachments/assets/be6abc52-9542-4b69-8c7d-771c319ec923" />
 <br>
 </div>
 

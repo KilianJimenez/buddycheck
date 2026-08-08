@@ -1,4 +1,11 @@
+<div align="center">
+
 # BuddyCheck
+**The most powerful and modular AI engine for content creation.**
+
+<img width="424" height="212" alt="BuddyCheck avatar" src="/Users/kilian.jimenez/Documents/PersonalProjects/buddycheck/attachments/buddycheck.jpg" />
+<br>
+</div>
 
 BuddyCheck bootstraps a guardrailed AI agent loop and a spec-driven development
 (SDD) pipeline into any GitHub repository. Instead of pointing an agent at your

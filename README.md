@@ -1,7 +1,7 @@
 <div align="center">
 
 # BuddyCheck
-**The most powerful and modular AI engine for content creation.**
+**Your reliable coding + SDD loop that helps you review your AI.**
 
 <img width="424" height="212" alt="BuddyCheck avatar" src="https://github.com/user-attachments/assets/be6abc52-9542-4b69-8c7d-771c319ec923" />
 <br>

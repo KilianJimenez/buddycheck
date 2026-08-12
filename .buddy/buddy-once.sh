@@ -38,7 +38,7 @@ touch progress.txt
 copilot \
   --agent=coder \
   --allow-all-tools \
-  -p "@task.md @progress.txt 1. Read the task and progress file. 2. Implement the task. 3. Commit your changes. 4. Update progress.txt with what you did. ONLY DO ONE TASK AT A TIME." \
+  -p "Follow strictly the steps of this custom agent. Do not skip any of them." \
   || echo "coder agent exited non-zero; continuing to oracle gate." >&2
 
 # Step 2 — oracle: review the coder's work and always open/update a PR.
@@ -63,5 +63,5 @@ rm -f "$SENTINEL"
 copilot \
   --agent=oracle \
   --allow-all-tools \
-  -p "@task.md @progress.txt Review the current branch changes against the GitHub issue in task.md, post your review as a comment on that issue, append your oracle review to progress.txt, and always open or update a pull request for this branch with the acceptance-criteria mapping and embedded run artifacts, regardless of verdict" \
+  -p "Follow strictly the steps of this custom agent. Do not skip any of them." \
   2>&1 | tee .oracle-run.log

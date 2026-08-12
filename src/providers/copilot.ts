@@ -5,6 +5,7 @@ export const copilotProvider: Provider = {
   label: 'GitHub Copilot CLI',
   templateDir: 'providers/copilot',
   targets: [
+    { from: 'buddy-once.sh', to: '.buddy/buddy-once.sh', executable: true },
     { from: 'agents', to: '.github/agents' },
     { from: 'workflows', to: '.github/workflows' },
     { from: 'pull_request_template.md', to: '.github/pull_request_template.md' },

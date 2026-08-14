@@ -13,6 +13,8 @@
 set -uo pipefail
 
 HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+# shellcheck source=tests/structural/lib.sh
+source "$HERE/lib.sh"
 TARGET="${1:-.}"
 
 if [ ! -d "$TARGET" ]; then
@@ -23,6 +25,7 @@ fi
 TARGET="$(cd "$TARGET" && pwd)"
 
 echo "Running BuddyCheck structural tests against: $TARGET"
+echo "Detected provider: $(detect_provider "$TARGET")"
 if [ -n "${EXPECTED_OWNER:-}" ]; then
   echo "Expected owner login: $EXPECTED_OWNER"
 fi

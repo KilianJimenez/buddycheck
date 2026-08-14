@@ -180,7 +180,9 @@ npm run build && node dist/index.js init
 ```
 
 Structural tests verify a scaffolded repo's generated layout and can be run
-against any target root:
+against any target root — they auto-detect whether the repo was scaffolded
+for Copilot or Opencode (from the agent-file layout) and assert against that
+provider's runtime conventions:
 
 ```bash
 EXPECTED_OWNER=myuser bash tests/structural/run-against.sh /path/to/repo

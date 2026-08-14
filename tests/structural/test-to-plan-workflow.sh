@@ -19,9 +19,14 @@
 
 set -uo pipefail
 
+HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+# shellcheck source=tests/structural/lib.sh
+source "$HERE/lib.sh"
+
 ROOT="$(cd "${1:-.}" && pwd)"
+init_provider_conventions "$ROOT"
 WORKFLOW="$ROOT/.github/workflows/to-plan.yml"
-AGENT="$ROOT/.github/agents/spec-planner.agent.md"
+AGENT="$AGENT_DIR/spec-planner$AGENT_EXT"
 
 fail=0
 
@@ -64,10 +69,10 @@ if [ -f "$WORKFLOW" ]; then
   grep -q "contents: read" "$WORKFLOW"
   check "workflow requests contents: read permission" $?
 
-  grep -q "COPILOT_CLI_TOKEN" "$WORKFLOW"
-  check "workflow uses COPILOT_CLI_TOKEN secret" $?
+  grep -q "$CLI_TOKEN_SECRET" "$WORKFLOW"
+  check "workflow uses $CLI_TOKEN_SECRET secret" $?
 
-  grep -q -- "--agent=spec-planner" "$WORKFLOW"
+  check_agent_invocation "$WORKFLOW" "spec-planner"
   check "workflow invokes the spec-planner agent" $?
 
   if python3 -c "import yaml" >/dev/null 2>&1; then
@@ -83,7 +88,7 @@ fi
 check "spec-planner.agent.md exists" $?
 
 if [ -f "$AGENT" ]; then
-  grep -q "^name: spec-planner" "$AGENT"
+  check_agent_frontmatter_name "$AGENT" "spec-planner"
   check "agent frontmatter declares name: spec-planner" $?
 
   grep -qi "plan" "$AGENT" && grep -qi "suggested" "$AGENT"

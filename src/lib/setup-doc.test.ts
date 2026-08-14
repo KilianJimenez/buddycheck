@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { copilotProvider } from '../providers/copilot.js';
+import { opencodeProvider } from '../providers/opencode.js';
 import { githubTracker, GITHUB_LABELS } from '../trackers/github.js';
 import { renderSetupDoc } from './setup-doc.js';
 
@@ -40,5 +41,32 @@ describe('renderSetupDoc', () => {
     for (const label of GITHUB_LABELS) {
       expect(doc).toContain(`\`${label.name}\``);
     }
+  });
+});
+
+describe('renderSetupDoc (Opencode provider)', () => {
+  it('documents API-key auth, GH_PAT, repo settings, and the Opencode CLI install/auth steps', () => {
+    const doc = renderSetupDoc({
+      ...base,
+      provider: opencodeProvider,
+      labelsHandled: true,
+      skippedSteps: [],
+    });
+    expect(doc).toContain('ANTHROPIC_API_KEY');
+    expect(doc).toContain('GH_PAT');
+    expect(doc).toContain('Read and write permissions');
+    expect(doc).toContain('create and approve pull requests');
+    expect(doc).toContain('opencode-ai');
+    expect(doc).toContain('opencode auth login');
+    expect(doc).toContain('opencode --version');
+    expect(doc).toContain('!grill');
+    expect(doc).toContain('!to-plan');
+    expect(doc).toContain('!to-issues');
+    expect(doc).toContain('Buddy - Once');
+    expect(doc).toContain('bash .buddy/buddy-once.sh');
+    expect(doc).toContain('`octocat`');
+    expect(doc).toContain('octocat/demo');
+    expect(doc).not.toMatch(/\{\{[A-Z_]+\}\}/);
+    expect(doc).not.toMatch(/\{[A-Za-z_]+\}/);
   });
 });

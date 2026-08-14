@@ -1,4 +1,4 @@
-import { existsSync } from 'node:fs';
+import { existsSync, readFileSync } from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { describe, expect, it } from 'vitest';
@@ -7,6 +7,7 @@ import { opencodeProvider } from './opencode.js';
 import { copilotProvider } from './copilot.js';
 
 const templatesRoot = path.join(path.dirname(fileURLToPath(import.meta.url)), '../../templates');
+const opencodeTemplateDir = path.join(templatesRoot, opencodeProvider.templateDir);
 
 describe('opencodeProvider registration', () => {
   it('registers Opencode in the provider list, after Copilot', () => {
@@ -39,5 +40,22 @@ describe('opencodeProvider registration', () => {
       const from = path.join(templatesRoot, opencodeProvider.templateDir, target.from);
       expect(existsSync(from), `expected ${from} to exist`).toBe(true);
     }
+  });
+});
+
+describe('opencodeProvider runtime invocations use `opencode run --agent <name> --auto`', () => {
+  it('buddy-once.sh invokes the coder agent with --auto', () => {
+    const script = readFileSync(path.join(opencodeTemplateDir, 'buddy-once.sh'), 'utf8');
+    expect(script).toMatch(/opencode run \\\n\s*--agent coder \\\n\s*--auto \\/);
+  });
+
+  it('buddy-once.sh invokes the oracle agent with --auto', () => {
+    const script = readFileSync(path.join(opencodeTemplateDir, 'buddy-once.sh'), 'utf8');
+    expect(script).toMatch(/opencode run \\\n\s*--agent oracle \\\n\s*--auto \\/);
+  });
+
+  it.each(['grill.yml', 'to-plan.yml', 'to-issues.yml'])('%s invokes its agent with --auto', (file) => {
+    const workflow = readFileSync(path.join(opencodeTemplateDir, 'workflows', file), 'utf8');
+    expect(workflow).toMatch(/opencode run \\\n\s*--agent [\w-]+ \\\n\s*--auto \\/);
   });
 });

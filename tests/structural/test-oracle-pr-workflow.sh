@@ -14,9 +14,14 @@
 
 set -uo pipefail
 
+HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+# shellcheck source=tests/structural/lib.sh
+source "$HERE/lib.sh"
+
 ROOT="$(cd "${1:-.}" && pwd)"
+init_provider_conventions "$ROOT"
 TEMPLATE="$ROOT/.github/pull_request_template.md"
-ORACLE="$ROOT/.github/agents/oracle.agent.md"
+ORACLE="$AGENT_DIR/oracle$AGENT_EXT"
 
 fail=0
 

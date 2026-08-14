@@ -19,9 +19,14 @@
 
 set -uo pipefail
 
+HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+# shellcheck source=tests/structural/lib.sh
+source "$HERE/lib.sh"
+
 ROOT="$(cd "${1:-.}" && pwd)"
+init_provider_conventions "$ROOT"
 WORKFLOW="$ROOT/.github/workflows/grill.yml"
-AGENT="$ROOT/.github/agents/grill-my-idea.agent.md"
+AGENT="$AGENT_DIR/grill-my-idea$AGENT_EXT"
 
 fail=0
 
@@ -64,10 +69,10 @@ if [ -f "$WORKFLOW" ]; then
   grep -q "contents: read" "$WORKFLOW"
   check "workflow requests contents: read permission" $?
 
-  grep -q "COPILOT_CLI_TOKEN" "$WORKFLOW"
-  check "workflow uses COPILOT_CLI_TOKEN secret" $?
+  grep -q "$CLI_TOKEN_SECRET" "$WORKFLOW"
+  check "workflow uses $CLI_TOKEN_SECRET secret" $?
 
-  grep -q -- "--agent=grill-my-idea" "$WORKFLOW"
+  check_agent_invocation "$WORKFLOW" "grill-my-idea"
   check "workflow invokes the grill-my-idea agent" $?
 
   if python3 -c "import yaml" >/dev/null 2>&1; then
@@ -83,7 +88,7 @@ fi
 check "grill-my-idea.agent.md exists" $?
 
 if [ -f "$AGENT" ]; then
-  grep -q "^name: grill-my-idea" "$AGENT"
+  check_agent_frontmatter_name "$AGENT" "grill-my-idea"
   check "agent frontmatter declares name: grill-my-idea" $?
 
   grep -qi "clarifying question" "$AGENT"

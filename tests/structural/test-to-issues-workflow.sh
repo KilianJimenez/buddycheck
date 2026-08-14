@@ -22,9 +22,14 @@
 
 set -uo pipefail
 
+HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+# shellcheck source=tests/structural/lib.sh
+source "$HERE/lib.sh"
+
 ROOT="$(cd "${1:-.}" && pwd)"
+init_provider_conventions "$ROOT"
 WORKFLOW="$ROOT/.github/workflows/to-issues.yml"
-AGENT="$ROOT/.github/agents/spec-to-issues.agent.md"
+AGENT="$AGENT_DIR/spec-to-issues$AGENT_EXT"
 
 fail=0
 
@@ -67,10 +72,10 @@ if [ -f "$WORKFLOW" ]; then
   grep -q "contents: read" "$WORKFLOW"
   check "workflow requests contents: read permission" $?
 
-  grep -q "COPILOT_CLI_TOKEN" "$WORKFLOW"
-  check "workflow uses COPILOT_CLI_TOKEN secret" $?
+  grep -q "$CLI_TOKEN_SECRET" "$WORKFLOW"
+  check "workflow uses $CLI_TOKEN_SECRET secret" $?
 
-  grep -q -- "--agent=spec-to-issues" "$WORKFLOW"
+  check_agent_invocation "$WORKFLOW" "spec-to-issues"
   check "workflow invokes the spec-to-issues agent" $?
 
   if python3 -c "import yaml" >/dev/null 2>&1; then
@@ -86,10 +91,10 @@ fi
 check "spec-to-issues.agent.md exists" $?
 
 if [ -f "$AGENT" ]; then
-  grep -q "^name: spec-to-issues" "$AGENT"
+  check_agent_frontmatter_name "$AGENT" "spec-to-issues"
   check "agent frontmatter declares name: spec-to-issues" $?
 
-  grep -q "to-issues" "$AGENT"
+  grep -q "to-issues" "$AGENT" || basename "$AGENT" | grep -q "to-issues"
   check "agent doc references the to-issues command" $?
 
   grep -qi "vertical.slice\|tracer.bullet" "$AGENT"

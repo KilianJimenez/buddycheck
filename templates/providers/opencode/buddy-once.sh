@@ -37,6 +37,7 @@ touch progress.txt
 # last action (see .opencode/agent/coder.md).
 opencode run \
   --agent coder \
+  --auto \
   "Follow strictly the steps of this custom agent. Do not skip any of them." \
   || echo "coder agent exited non-zero; continuing to oracle gate." >&2
 
@@ -59,5 +60,6 @@ rm -f "$SENTINEL"
 # agent can embed the run log in the pull request it opens/updates.
 opencode run \
   --agent oracle \
+  --auto \
   "Follow strictly the steps of this custom agent. Do not skip any of them." \
   2>&1 | tee .oracle-run.log

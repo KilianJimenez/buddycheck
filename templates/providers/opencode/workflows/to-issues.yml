@@ -43,4 +43,5 @@ jobs:
         run: |
           opencode run \
             --agent spec-to-issues \
+            --auto \
             "Read issue #${ISSUE_NUMBER} and its full comment thread. Find the most recent !to-plan comment's approved plan and suggested vertical-slice issues, create the corresponding real issues on the tracker (each linked back with 'Part of #${ISSUE_NUMBER}' and labeled ready-for-agent), post a single summary comment on issue #${ISSUE_NUMBER} listing the created issues with links, and set the sdd:issues-created label on issue #${ISSUE_NUMBER}."

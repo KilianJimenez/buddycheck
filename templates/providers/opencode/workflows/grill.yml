@@ -44,4 +44,5 @@ jobs:
         run: |
           opencode run \
             --agent grill-my-idea \
+            --auto \
             "Read issue #${ISSUE_NUMBER} and its full comment thread. Post one round of relentless, focused clarifying questions, sharpened scope, and surfaced open assumptions as a single comment on issue #${ISSUE_NUMBER} to shape the idea toward an implementable design, and set the sdd:grilling label on issue #${ISSUE_NUMBER} (removing any other sdd:* label)."

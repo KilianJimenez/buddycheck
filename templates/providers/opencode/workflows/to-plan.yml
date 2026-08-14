@@ -44,4 +44,5 @@ jobs:
         run: |
           opencode run \
             --agent spec-planner \
+            --auto \
             "Read issue #${ISSUE_NUMBER} and its full comment thread. Post a single comment on issue #${ISSUE_NUMBER} containing a concrete design/implementation plan plus a set of suggested vertical-slice issues (described, not yet created), and set the sdd:planned label on issue #${ISSUE_NUMBER} (removing any other sdd:* label)."

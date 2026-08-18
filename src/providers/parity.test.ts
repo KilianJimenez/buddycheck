@@ -16,16 +16,16 @@ function baseNames(dir: string, stripSuffix: string): string[] {
 }
 
 describe('provider parity', () => {
-  it('exposes the same five agents for both Copilot and Opencode', () => {
+  it('exposes the same six agents for both Copilot and Opencode', () => {
     const copilotAgents = baseNames(path.join(templatesRoot, copilotProvider.templateDir, 'agents'), '.agent.md');
     const opencodeAgents = baseNames(path.join(templatesRoot, opencodeProvider.templateDir, 'agents'), '.md');
 
-    expect(copilotAgents).toHaveLength(5);
-    expect(opencodeAgents).toHaveLength(5);
+    expect(copilotAgents).toHaveLength(6);
+    expect(opencodeAgents).toHaveLength(6);
     expect(opencodeAgents).toEqual(copilotAgents);
   });
 
-  it('exposes the same four workflows for both Copilot and Opencode', () => {
+  it('exposes the same five workflows for both Copilot and Opencode', () => {
     const copilotWorkflows = baseNames(
       path.join(templatesRoot, copilotProvider.templateDir, 'workflows'),
       '.yml',
@@ -35,8 +35,8 @@ describe('provider parity', () => {
       '.yml',
     );
 
-    expect(copilotWorkflows).toHaveLength(4);
-    expect(opencodeWorkflows).toHaveLength(4);
+    expect(copilotWorkflows).toHaveLength(5);
+    expect(opencodeWorkflows).toHaveLength(5);
     expect(opencodeWorkflows).toEqual(copilotWorkflows);
   });
 });

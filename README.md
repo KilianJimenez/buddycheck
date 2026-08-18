@@ -63,12 +63,14 @@ AGENTS.md                          # repo-level agent instructions
 │   ├── oracle.agent.md
 │   ├── grill-my-idea.agent.md
 │   ├── spec-planner.agent.md
-│   └── spec-to-issues.agent.md
+│   ├── spec-to-issues.agent.md
+│   └── tech-debt-scout.agent.md
 ├── workflows/
 │   ├── buddy-once.yml             # "Buddy - Once" (workflow_dispatch)
 │   ├── grill.yml                  # !grill
 │   ├── to-plan.yml                # !to-plan
-│   └── to-issues.yml              # !to-issues
+│   ├── to-issues.yml              # !to-issues
+│   └── tech-debt-scout.yml        # weekly (Fri 19:00 UTC) + workflow_dispatch
 └── pull_request_template.md       # the oracle's PR report format
 .gitignore                         # managed block for agent runtime files
                                    # (.coder-done, .oracle-run.log, task.md, progress.txt)
@@ -127,6 +129,19 @@ Exactly one `sdd:*` label is present at a time — each command removes the
 others. Every agent-authored comment is prefixed with an AI-generated
 disclaimer. Commands are **only honored from the owner login you configured
 during `init`**; comments from anyone else are ignored by the workflow gate.
+
+### Weekly tech-debt scout
+
+The **Tech Debt Scout** workflow runs every Friday at 19:00 UTC (and on
+`workflow_dispatch`). It scans the whole repo — source, `docs/adr/`,
+`CONTEXT.md`, READMEs — for the single most important critical/high-severity
+piece of debt (tie-broken in order: architectural → code → documentation →
+DevOps → process → security). If it finds an untracked candidate, it files
+**exactly one** issue labeled `needs-triage` plus the matching
+`tech-debt:<type>` label — no `sdd:*` label, and not `ready-for-agent`, so a
+human triages it before it can reach the coder loop. If nothing qualifies, or
+the candidate is already tracked by an open `tech-debt:*` issue, the run
+prints `No major issues found at the moment.` and exits clean.
 
 ## Setup requirements
 

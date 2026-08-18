@@ -1,0 +1,44 @@
+name: Tech Debt Scout
+
+# Weekly + manual scout: scans the whole repo (source, ADRs, CONTEXT.md,
+# READMEs), picks the single most important critical/high-severity tech-debt
+# item (architectural > code > documentation > devops > process > security
+# tie-break order), and files it as a `needs-triage` + `tech-debt:<type>`
+# issue — skipping duplicates and reporting "No major issues found at the
+# moment." when nothing qualifies.
+#
+# Required repository secrets:
+#   - ANTHROPIC_API_KEY: an Anthropic API key used to authenticate the
+#     `opencode` CLI non-interactively.
+on:
+  schedule:
+    - cron: '0 19 * * 5'
+  workflow_dispatch: {}
+
+permissions:
+  issues: write
+  contents: read
+
+jobs:
+  tech-debt-scout:
+    runs-on: ubuntu-latest
+    env:
+      ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Install Opencode CLI
+        run: npm install -g opencode-ai
+
+      - name: Run tech-debt-scout agent
+        run: |
+          opencode run \
+            --agent tech-debt-scout \
+            --auto \
+            "Follow strictly the steps of this custom agent. Do not skip any of them."

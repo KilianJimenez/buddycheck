@@ -111,6 +111,16 @@ if [ -f "$AGENT" ]; then
   grep -qi "already tracked\|dedup\|skip filing" "$AGENT"
   check "agent doc dedups against already-tracked tech-debt issues" $?
 
+  # The dedup query must match issues carrying ANY tech-debt:* label, not ALL
+  # of them. `gh issue list --label a --label b` ANDs the flags together, so a
+  # dedup command that chains multiple `--label "tech-debt:..."` flags on one
+  # `gh issue list` invocation is a real idempotency bug, not just prose noise.
+  ! grep -Eq '(--label "tech-debt:[^"]+"[[:space:]]+){2,}' "$AGENT"
+  check "agent doc dedup query does not AND-combine multiple tech-debt: labels" $?
+
+  grep -qi 'starting with.*tech-debt:\|starts with "tech-debt:"\|prefix.*tech-debt\|any label matching\|label.*startswith.*tech-debt' "$AGENT"
+  check "agent doc dedup query explains matching ANY tech-debt: label by prefix" $?
+
   grep -qi "exactly one issue\|one issue per run\|hard cap" "$AGENT"
   check "agent doc caps filing at exactly one issue per run" $?
 

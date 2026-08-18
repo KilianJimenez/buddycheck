@@ -19,6 +19,12 @@ export const GITHUB_LABELS: TrackerLabel[] = [
   { name: 'sdd:grilling', color: 'f9d0c4', description: 'SDD status: idea is being grilled/shaped' },
   { name: 'sdd:planned', color: 'c5def5', description: 'SDD status: plan + suggested issues drafted' },
   { name: 'sdd:issues-created', color: 'bfd4f2', description: 'SDD status: slice issues created from the plan' },
+  { name: 'tech-debt:architectural', color: '5319e7', description: 'Tech debt: architecture/design shortcuts or drift' },
+  { name: 'tech-debt:code', color: 'e99695', description: 'Tech debt: code-level quality, duplication, or complexity' },
+  { name: 'tech-debt:documentation', color: '1d76db', description: 'Tech debt: missing or outdated documentation' },
+  { name: 'tech-debt:devops', color: 'fef2c0', description: 'Tech debt: CI/CD, infra, or tooling shortcuts' },
+  { name: 'tech-debt:process', color: 'c2e0c6', description: 'Tech debt: workflow or process gaps' },
+  { name: 'tech-debt:security', color: 'b60205', description: 'Tech debt: security hardening or risk to address' },
 ];
 
 /** Extract `owner/repo` from a GitHub remote URL (ssh or https forms). */

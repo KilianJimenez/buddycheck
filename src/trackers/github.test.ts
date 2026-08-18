@@ -137,6 +137,12 @@ describe('createLabels', () => {
       'wontfix',
       'sdd:grilling',
       'sdd:issues-created',
+      'tech-debt:architectural',
+      'tech-debt:code',
+      'tech-debt:documentation',
+      'tech-debt:devops',
+      'tech-debt:process',
+      'tech-debt:security',
     ]);
     expect(result.failed).toEqual([]);
   });
@@ -151,7 +157,7 @@ describe('createLabels', () => {
     expect(result.failed).toEqual([{ name: 'needs-triage', error: 'boom' }]);
   });
 
-  it('defines the eight documented labels', () => {
+  it('defines the fourteen documented labels', () => {
     expect(GITHUB_LABELS.map((l) => l.name)).toEqual([
       'needs-triage',
       'needs-info',
@@ -161,6 +167,12 @@ describe('createLabels', () => {
       'sdd:grilling',
       'sdd:planned',
       'sdd:issues-created',
+      'tech-debt:architectural',
+      'tech-debt:code',
+      'tech-debt:documentation',
+      'tech-debt:devops',
+      'tech-debt:process',
+      'tech-debt:security',
     ]);
     expect(GITHUB_LABELS.every((l) => /^[0-9a-f]{6}$/.test(l.color))).toBe(true);
     expect(GITHUB_LABELS.every((l) => l.description.length > 0)).toBe(true);

@@ -74,7 +74,7 @@ AGENTS.md                          # repo-level agent instructions
                                    # (.coder-done, .oracle-run.log, task.md, progress.txt)
 ```
 
-And eight labels in the tracker:
+And fourteen labels in the tracker:
 
 | Label | Purpose |
 | --- | --- |
@@ -86,6 +86,12 @@ And eight labels in the tracker:
 | `sdd:grilling` | Idea is being grilled into shape |
 | `sdd:planned` | Plan + suggested issues posted, awaiting approval |
 | `sdd:issues-created` | Approved plan split into implementation issues |
+| `tech-debt:architectural` | Architecture/design shortcuts or drift |
+| `tech-debt:code` | Code-level quality, duplication, or complexity |
+| `tech-debt:documentation` | Missing or outdated documentation |
+| `tech-debt:devops` | CI/CD, infra, or tooling shortcuts |
+| `tech-debt:process` | Workflow or process gaps |
+| `tech-debt:security` | Security hardening or risk to address |
 
 ## How it works
 

@@ -53,6 +53,12 @@ These labels exist in `KilianJimenez/buddycheck` (created or verified during ini
 | `sdd:grilling` | `#f9d0c4` | SDD status: idea is being grilled/shaped |
 | `sdd:planned` | `#c5def5` | SDD status: plan + suggested issues drafted |
 | `sdd:issues-created` | `#bfd4f2` | SDD status: slice issues created from the plan |
+| `tech-debt:architectural` | `#5319e7` | Tech debt: architecture/design shortcuts or drift |
+| `tech-debt:code` | `#e99695` | Tech debt: code-level quality, duplication, or complexity |
+| `tech-debt:documentation` | `#1d76db` | Tech debt: missing or outdated documentation |
+| `tech-debt:devops` | `#fef2c0` | Tech debt: CI/CD, infra, or tooling shortcuts |
+| `tech-debt:process` | `#c2e0c6` | Tech debt: workflow or process gaps |
+| `tech-debt:security` | `#b60205` | Tech debt: security hardening or risk to address |
 
 ## 6. Steps left for you
 

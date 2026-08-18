@@ -17,6 +17,12 @@
 # content. The agent's judgement (which debt is "major") is intentionally not
 # asserted here — only the wiring.
 #
+# Runtime label self-healing: the workflow must ensure every `tech-debt:*`
+# label exists (create-if-missing, idempotent) before the agent runs, so a
+# scheduled run against a repo whose labels were deleted still succeeds and
+# applies the correct label without erroring on duplicates or clobbering
+# labels a maintainer customized.
+#
 # Usage: bash tests/structural/test-tech-debt-scout-workflow.sh [TARGET_ROOT]
 #   TARGET_ROOT defaults to `.` — the root of a repo scaffolded by
 #   `npx buddycheck init`.
@@ -73,6 +79,21 @@ if [ -f "$WORKFLOW" ]; then
 
   check_agent_invocation "$WORKFLOW" "tech-debt-scout"
   check "workflow invokes the tech-debt-scout agent" $?
+
+  # --- runtime label self-healing (create-if-missing, idempotent) ---
+  grep -qi "gh label create" "$WORKFLOW"
+  check "workflow ensures tech-debt:* labels via gh label create" $?
+
+  for type in architectural code documentation devops process security; do
+    grep -q "tech-debt:$type" "$WORKFLOW"
+    check "workflow self-heals the tech-debt:$type label" $?
+  done
+
+  grep -qi "already exists\|skip\|leave.*untouched\|leaving untouched" "$WORKFLOW"
+  check "workflow leaves existing tech-debt:* labels untouched (no blind overwrite)" $?
+
+  ! grep -q -- "--force" "$WORKFLOW"
+  check "workflow label self-healing does not blindly --force overwrite existing labels" $?
 
   if python3 -c "import yaml" >/dev/null 2>&1; then
     python3 -c "import yaml,sys; yaml.safe_load(open(sys.argv[1]))" "$WORKFLOW" >/dev/null 2>&1

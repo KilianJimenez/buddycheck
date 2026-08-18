@@ -7,6 +7,11 @@ name: Tech Debt Scout
 # issue — skipping duplicates and reporting "No major issues found at the
 # moment." when nothing qualifies.
 #
+# Before the agent runs, the workflow self-heals the `tech-debt:*` labels
+# (create-if-missing, idempotent) so a scheduled run against a repo whose
+# labels were deleted still succeeds and applies the correct label, without
+# duplicate-label errors or touching labels that already exist.
+#
 # Required repository secrets:
 #   - COPILOT_CLI_TOKEN: a GitHub Copilot CLI auth token (personal access
 #     token or Copilot token) used to authenticate `copilot` non-interactively.
@@ -27,6 +32,28 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+
+      - name: Ensure tech-debt labels exist
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          existing="$(gh label list --repo "${{ github.repository }}" --limit 200 --json name --jq '.[].name')"
+          ensure_label() {
+            local name="$1" color="$2" description="$3"
+            if grep -qxF "$name" <<< "$existing"; then
+              echo "Label '$name' already exists — leaving it untouched."
+            else
+              gh label create "$name" --repo "${{ github.repository }}" --color "$color" --description "$description"
+              echo "Created missing label '$name'."
+            fi
+          }
+          ensure_label "tech-debt:architectural" "5319e7" "Tech debt: architecture/design shortcuts or drift"
+          ensure_label "tech-debt:code" "e99695" "Tech debt: code-level quality, duplication, or complexity"
+          ensure_label "tech-debt:documentation" "1d76db" "Tech debt: missing or outdated documentation"
+          ensure_label "tech-debt:devops" "fef2c0" "Tech debt: CI/CD, infra, or tooling shortcuts"
+          ensure_label "tech-debt:process" "c2e0c6" "Tech debt: workflow or process gaps"
+          ensure_label "tech-debt:security" "b60205" "Tech debt: security hardening or risk to address"
 
       - name: Set up Node.js
         uses: actions/setup-node@v4

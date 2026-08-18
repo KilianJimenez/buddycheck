@@ -29,7 +29,7 @@ Follow these steps in order — do not skip any:
 - This selection is a hard cap: never nominate more than one item per run.
 
 ### 3. Check for existing tracking (dedup)
-- Run `gh issue list --label "tech-debt:architectural" --label "tech-debt:code" ...` (or list open issues and inspect labels) to find any currently open issue carrying a `tech-debt:*` label that already tracks the chosen debt.
+- Run `gh issue list --state open --json number,title,labels --limit 200` and filter the result for any issue whose labels include one **starting with** `tech-debt:` (any single matching label counts — do not chain multiple `--label "tech-debt:..."` flags on one `gh issue list` call, since that ANDs the flags together and would only match issues carrying *every* listed label instead of *any* one).
 - If the chosen debt is already tracked, **skip filing** — do not create a duplicate issue. Treat this run as an empty run (see step 5).
 
 ### 4. File the issue (if not already tracked)

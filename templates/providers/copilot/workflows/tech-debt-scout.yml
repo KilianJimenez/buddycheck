@@ -41,4 +41,4 @@ jobs:
           copilot \
             --agent=tech-debt-scout \
             --allow-all-tools \
-            -p "Scan the whole repository (source, docs/adr/, CONTEXT.md, READMEs). Consider only critical or high severity technical debt across architectural, code, documentation, DevOps, process, and security types, using that order as the tie-break. Check currently open issues carrying any tech-debt:* label and skip filing if the chosen debt is already tracked. If a qualifying, untracked candidate is found, file exactly one GitHub issue labelled needs-triage plus the single matching tech-debt:<type> label (no sdd:* label, not ready-for-agent). If nothing qualifies or the only candidate is already tracked, print 'No major issues found at the moment.' and exit successfully."
+            -p "Follow strictly the steps of this custom agent. Do not skip any of them."

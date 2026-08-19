@@ -7,6 +7,10 @@
 # matching prefix, and `grill.yml` has been converted to a `workflow_call`-only
 # reusable workflow invoked by the conductor's `grill` job.
 #
+# Also verifies issue #46: `to-plan.yml` has likewise been converted to a
+# `workflow_call`-only reusable workflow, and the conductor gains a `to-plan`
+# job that `uses:` it, gated on the router's `to-plan` command output.
+#
 # These are the repository's *own* dogfooded automation workflows (not the
 # scaffolding templates under templates/, which are covered by
 # tests/structural/ instead). GitHub Actions provides no unit-test harness for
@@ -25,6 +29,7 @@ ROOT="$(cd "${1:-$HERE/../..}" && pwd)"
 
 CONDUCTOR="$ROOT/.github/workflows/sdd-conductor.yml"
 GRILL="$ROOT/.github/workflows/grill.yml"
+TO_PLAN="$ROOT/.github/workflows/to-plan.yml"
 
 fail=0
 
@@ -99,6 +104,12 @@ if [ -f "$CONDUCTOR" ]; then
   grep -q "COPILOT_CLI_TOKEN:" "$CONDUCTOR"
   check "conductor maps the COPILOT_CLI_TOKEN secret to the grill job" $?
 
+  grep -q "uses: ./.github/workflows/to-plan.yml" "$CONDUCTOR"
+  check "conductor's to-plan job uses the reusable to-plan workflow" $?
+
+  grep -q "needs.router.outputs.command == 'to-plan'" "$CONDUCTOR"
+  check "conductor's to-plan job is gated on the router's command output" $?
+
   validate_yaml "$CONDUCTOR"
 fi
 
@@ -144,6 +155,50 @@ if [ -f "$GRILL" ]; then
   check "grill.yml no longer reads github.event.issue.number" $?
 
   validate_yaml "$GRILL"
+fi
+
+# --- to-plan.yml conversion checks ---
+[ -f "$TO_PLAN" ]
+check "to-plan.yml still exists" $?
+
+if [ -f "$TO_PLAN" ]; then
+  grep -q "workflow_call:" "$TO_PLAN"
+  check "to-plan.yml triggers on workflow_call" $?
+
+  ! grep -q "issue_comment:" "$TO_PLAN"
+  check "to-plan.yml no longer triggers on issue_comment" $?
+
+  grep -q "issue_number:" "$TO_PLAN"
+  check "to-plan.yml declares an issue_number input" $?
+
+  grep -q "required: true" "$TO_PLAN"
+  check "to-plan.yml's issue_number input is required" $?
+
+  grep -q "COPILOT_CLI_TOKEN:" "$TO_PLAN"
+  check "to-plan.yml declares a required COPILOT_CLI_TOKEN secret" $?
+
+  ! grep -q "github.event.comment.user.login == 'KilianJimenez'" "$TO_PLAN"
+  check "to-plan.yml's job-level author/prefix guard is removed" $?
+
+  ! grep -q "startsWith(github.event.comment.body" "$TO_PLAN"
+  check "to-plan.yml no longer checks the comment body prefix" $?
+
+  grep -q "issues: write" "$TO_PLAN"
+  check "to-plan.yml keeps issues: write permission" $?
+
+  grep -q "contents: read" "$TO_PLAN"
+  check "to-plan.yml keeps contents: read permission" $?
+
+  grep -q 'COPILOT_GITHUB_TOKEN: \${{ secrets.COPILOT_CLI_TOKEN }}' "$TO_PLAN"
+  check "to-plan.yml keeps the COPILOT_GITHUB_TOKEN secret mapping" $?
+
+  grep -q "inputs.issue_number" "$TO_PLAN"
+  check "to-plan.yml reads inputs.issue_number instead of the event context" $?
+
+  ! grep -q "github.event.issue.number" "$TO_PLAN"
+  check "to-plan.yml no longer reads github.event.issue.number" $?
+
+  validate_yaml "$TO_PLAN"
 fi
 
 if [ "$fail" -eq 0 ]; then

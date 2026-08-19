@@ -11,9 +11,8 @@ name: SDD - Conductor
 # no-op. The individual command workflows are `workflow_call`-only and no
 # longer listen on `issue_comment` themselves.
 #
-# `grill.yml` and `to-plan.yml` have both been converted so far (issues #45,
-# #46); `to-issues.yml` still listens on `issue_comment` directly pending its
-# own conversion.
+# `grill.yml`, `to-plan.yml`, and `to-issues.yml` have all been converted to
+# `workflow_call`-only reusable workflows (issues #45, #46, #47).
 #
 # Required repository secrets:
 #   - COPILOT_CLI_TOKEN: a GitHub Copilot CLI auth token (personal access
@@ -67,6 +66,19 @@ jobs:
     needs: router
     if: needs.router.outputs.command == 'to-plan'
     uses: ./.github/workflows/to-plan.yml
+    permissions:
+      issues: write
+      contents: read
+    with:
+      issue_number: ${{ github.event.issue.number }}
+    secrets:
+      COPILOT_CLI_TOKEN: ${{ secrets.COPILOT_CLI_TOKEN }}
+      GH_PAT: ${{ secrets.GH_PAT }}
+
+  to-issues:
+    needs: router
+    if: needs.router.outputs.command == 'to-issues'
+    uses: ./.github/workflows/to-issues.yml
     permissions:
       issues: write
       contents: read

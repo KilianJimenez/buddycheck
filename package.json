@@ -1,6 +1,6 @@
 {
   "name": "buddycheck",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Bootstrap an AI guardrails + spec-driven development (SDD) workflow into any repo",
   "license": "MIT",
   "type": "module",

@@ -1,0 +1,60 @@
+name: SDD - Conductor
+
+# Sole `issue_comment` entrypoint for the SDD commands. Inspects the
+# triggering comment and routes to exactly one reusable workflow based on the
+# first matching prefix: `!grill` -> grill.yml, `!to-plan` -> to-plan.yml,
+# `!to-issues` -> to-issues.yml (see .buddy/docs/sdd-workflow.md).
+#
+# The exact-author + `startsWith` guard lives solely here, on the `router`
+# job. A comment from any other author, or one that doesn't start with a
+# known command prefix, satisfies no job's `if` and the run is a silent
+# no-op. The individual command workflows are `workflow_call`-only and no
+# longer listen on `issue_comment` themselves.
+#
+# Required repository secrets:
+#   - COPILOT_CLI_TOKEN: a GitHub Copilot CLI auth token (personal access
+#     token or Copilot token), forwarded to each reusable workflow.
+on:
+  issue_comment:
+    types: [created]
+
+permissions:
+  issues: write
+  contents: read
+
+jobs:
+  router:
+    if: |
+      github.event.comment.user.login == 'KilianJimenez' &&
+      (startsWith(github.event.comment.body, '!grill') ||
+       startsWith(github.event.comment.body, '!to-plan') ||
+       startsWith(github.event.comment.body, '!to-issues'))
+    runs-on: ubuntu-latest
+    outputs:
+      command: ${{ steps.parse.outputs.command }}
+    steps:
+      - name: Parse comment prefix into a single command
+        id: parse
+        env:
+          COMMENT_BODY: ${{ github.event.comment.body }}
+        run: |
+          if [[ "$COMMENT_BODY" == '!grill'* ]]; then
+            echo "command=grill" >> "$GITHUB_OUTPUT"
+          elif [[ "$COMMENT_BODY" == '!to-plan'* ]]; then
+            echo "command=to-plan" >> "$GITHUB_OUTPUT"
+          elif [[ "$COMMENT_BODY" == '!to-issues'* ]]; then
+            echo "command=to-issues" >> "$GITHUB_OUTPUT"
+          fi
+
+  grill:
+    needs: router
+    if: needs.router.outputs.command == 'grill'
+    uses: ./.github/workflows/grill.yml
+    permissions:
+      issues: write
+      contents: read
+    with:
+      issue_number: ${{ github.event.issue.number }}
+    secrets:
+      COPILOT_CLI_TOKEN: ${{ secrets.COPILOT_CLI_TOKEN }}
+      GH_PAT: ${{ secrets.GH_PAT }}

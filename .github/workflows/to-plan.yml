@@ -25,6 +25,8 @@ jobs:
       startsWith(github.event.comment.body, '!to-plan')
     runs-on: ubuntu-latest
     env:
+      GITHUB_TOKEN: ${{ secrets.GH_PAT }}
+      GH_TOKEN: ${{ secrets.GH_PAT }}
       COPILOT_GITHUB_TOKEN: ${{ secrets.COPILOT_CLI_TOKEN }}
     steps:
       - name: Checkout repository

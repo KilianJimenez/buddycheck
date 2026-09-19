@@ -34,20 +34,18 @@ touch progress.txt
 
 # Step 1 — coder: implement the selected issue on a feature branch. The coder
 # agent signals completion by creating the `.coder-done` sentinel file as its
-# last action (see .github/agents/coder.agent.md).
-copilot \
-  --agent=coder \
-  --allow-all-tools \
-  -p "Follow strictly the steps of this custom agent. Do not skip any of them." \
+# last action (see .opencode/agent/coder.md).
+opencode run \
+  --agent coder \
+  --auto \
+  "Follow strictly the steps of this custom agent. Do not skip any of them." \
   || echo "coder agent exited non-zero; continuing to oracle gate." >&2
 
 # Step 2 — oracle: review the coder's work and always open/update a PR.
 #
-# This is invoked here as an explicit foreground step (rather than via an
-# agentStop hook) so it runs reliably in CI: repo hooks in .github/hooks/ only
-# load once the working folder is trusted, and a backgrounded hook process
-# would be killed when the workflow job ends. Running oracle synchronously in
-# the same job avoids both problems.
+# This is invoked here as an explicit foreground step so it runs reliably in
+# CI, and to avoid running as a backgrounded process that would be killed
+# when the workflow job ends.
 SENTINEL=".coder-done"
 
 if [ ! -f "$SENTINEL" ]; then
@@ -60,8 +58,8 @@ rm -f "$SENTINEL"
 
 # Run oracle in the foreground, teeing its output to .oracle-run.log so the
 # agent can embed the run log in the pull request it opens/updates.
-copilot \
-  --agent=oracle \
-  --allow-all-tools \
-  -p "Follow strictly the steps of this custom agent. Do not skip any of them." \
+opencode run \
+  --agent oracle \
+  --auto \
+  "Follow strictly the steps of this custom agent. Do not skip any of them." \
   2>&1 | tee .oracle-run.log

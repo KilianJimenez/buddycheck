@@ -1,7 +1,11 @@
 ---
-name: spec-planner
 description: Reads a grilled idea issue's full comment thread and posts a design/implementation plan plus suggested vertical-slice issues as a single comment, then sets the sdd:planned label
-model: Claude Opus 4.8 (copilot)
+mode: primary
+permission:
+  edit: allow
+  bash: allow
+  webfetch: allow
+model: c
 ---
 
 You are a focused planning agent. Your job is to turn a grilled idea captured

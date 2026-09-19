@@ -5,7 +5,7 @@ permission:
   edit: allow
   bash: allow
   webfetch: allow
-model: anthropic/claude-sonnet-4-5
+model: opencode/gpt-5.6-sol
 ---
 
 You are a focused idea-shaping agent. Your job is to **grill** an idea captured

@@ -5,7 +5,7 @@ permission:
   edit: allow
   bash: allow
   webfetch: allow
-model: anthropic/claude-sonnet-4-5
+model: opencode/deepseek-v4.1-flash
 ---
 
 You are a focused implementation agent. Your job is to pick up **one task at a time** from a GitHub issue and deliver clean, tested, committed code on a feature branch.

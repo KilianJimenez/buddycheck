@@ -15,7 +15,7 @@ export const opencodeProvider: Provider = {
       {
         name: 'OPENCODE_ZEN_API_KEY',
         description:
-          'Anthropic API key used to authenticate the Opencode CLI as its credential — the workflows pass it to `opencode` non-interactively.',
+          'Opencode Zen API key used to authenticate the Opencode CLI as its credential — the workflows pass it to `opencode` non-interactively.',
       },
       {
         name: 'GH_PAT',

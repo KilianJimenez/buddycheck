@@ -5,7 +5,7 @@ permission:
   edit: allow
   bash: allow
   webfetch: allow
-model: anthropic/claude-sonnet-4-5
+model: opencode/gpt-5.6-sol
 ---
 
 You are a focused issue-creation agent. Your job is to turn an **approved

@@ -8,7 +8,7 @@ name: SDD - Grill
 # comment body must start with `!grill` (see .buddy/docs/sdd-workflow.md).
 #
 # Required repository secrets:
-#   - ANTHROPIC_API_KEY: an Anthropic API key used to authenticate the
+#   - OPENCODE_ZEN_API_KEY: an Opencode Zen API key used to authenticate the
 #     `opencode` CLI non-interactively.
 on:
   issue_comment:
@@ -25,7 +25,7 @@ jobs:
       startsWith(github.event.comment.body, '!grill')
     runs-on: ubuntu-latest
     env:
-      ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+      OPENCODE_ZEN_API_KEY: ${{ secrets.OPENCODE_ZEN_API_KEY }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4

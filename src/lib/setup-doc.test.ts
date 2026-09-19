@@ -52,7 +52,7 @@ describe('renderSetupDoc (Opencode provider)', () => {
       labelsHandled: true,
       skippedSteps: [],
     });
-    expect(doc).toContain('ANTHROPIC_API_KEY');
+    expect(doc).toContain('OPENCODE_ZEN_API_KEY');
     expect(doc).toContain('GH_PAT');
     expect(doc).toContain('Read and write permissions');
     expect(doc).toContain('create and approve pull requests');

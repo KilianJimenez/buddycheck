@@ -13,7 +13,7 @@ export const opencodeProvider: Provider = {
   setupDoc: {
     secrets: [
       {
-        name: 'ANTHROPIC_API_KEY',
+        name: 'OPENCODE_ZEN_API_KEY',
         description:
           'Anthropic API key used to authenticate the Opencode CLI as its credential — the workflows pass it to `opencode` non-interactively.',
       },
@@ -29,7 +29,7 @@ export const opencodeProvider: Provider = {
     ],
     cliInstall: [
       'Install the Opencode CLI: `npm i -g opencode-ai`.',
-      'Authenticate once locally: set `ANTHROPIC_API_KEY` (or run `opencode auth login`) and follow the sign-in prompt.',
+      'Authenticate once locally: set `OPENCODE_ZEN_API_KEY` (or run `opencode auth login`) and follow the sign-in prompt.',
       'Verify with `opencode --version` before running `bash .buddy/buddy-once.sh`.',
     ],
   },

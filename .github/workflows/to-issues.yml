@@ -1,31 +1,17 @@
 name: SDD - To Issues
 
-# Reusable SDD command: `!to-issues` turns an approved plan (posted by the
-# `!to-plan` step) into real, linked GitHub issues.
+# Comment-triggered SDD command: `!to-issues` turns an approved plan (posted
+# by the `!to-plan` step) into real, linked GitHub issues.
 #
-# This workflow is `workflow_call`-only. It is never triggered directly by a
-# comment; the sole `issue_comment` entrypoint for all SDD commands is
-# `sdd-conductor.yml`, which enforces the exact-author + `startsWith` guard
-# and invokes this workflow via `uses:` (see .buddy/docs/sdd-workflow.md).
+# Trigger guard: the comment author must be exactly `KilianJimenez` and the
+# comment body must start with `!to-issues` (see .buddy/docs/sdd-workflow.md).
 #
-# Required secrets (passed by the caller):
-#   - COPILOT_CLI_TOKEN: a GitHub Copilot CLI auth token (personal access
-#     token or Copilot token) used to authenticate `copilot` non-interactively.
-#   - GH_PAT: a classic Personal Access Token with `repo` + `workflow` scopes,
-#     used for `gh`/GraphQL operations that the default GITHUB_TOKEN can't
-#     perform (see buddy-once.yml).
+# Required repository secrets:
+#   - ANTHROPIC_API_KEY: an Anthropic API key used to authenticate the
+#     `opencode` CLI non-interactively.
 on:
-  workflow_call:
-    inputs:
-      issue_number:
-        description: The number of the issue to run the spec-to-issues agent on.
-        required: true
-        type: number
-    secrets:
-      COPILOT_CLI_TOKEN:
-        required: true
-      GH_PAT:
-        required: true
+  issue_comment:
+    types: [created]
 
 permissions:
   issues: write
@@ -33,11 +19,12 @@ permissions:
 
 jobs:
   to-issues:
+    if: |
+      github.event.comment.user.login == 'KilianJimenez' &&
+      startsWith(github.event.comment.body, '!to-issues')
     runs-on: ubuntu-latest
     env:
-      GITHUB_TOKEN: ${{ secrets.GH_PAT }}
-      GH_TOKEN: ${{ secrets.GH_PAT }}
-      COPILOT_GITHUB_TOKEN: ${{ secrets.COPILOT_CLI_TOKEN }}
+      ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -47,14 +34,14 @@ jobs:
         with:
           node-version: 22
 
-      - name: Install GitHub Copilot CLI
-        run: npm install -g @github/copilot
+      - name: Install Opencode CLI
+        run: npm install -g opencode-ai
 
       - name: Run spec-to-issues agent
         env:
-          ISSUE_NUMBER: ${{ inputs.issue_number }}
+          ISSUE_NUMBER: ${{ github.event.issue.number }}
         run: |
-          copilot \
-            --agent=spec-to-issues \
-            --allow-all-tools \
-            -p "Read issue #${ISSUE_NUMBER} and its full comment thread. Find the most recent !to-plan comment's approved plan and suggested vertical-slice issues, create the corresponding real issues on the tracker (each linked back with 'Part of #${ISSUE_NUMBER}' and labeled ready-for-agent), post a single summary comment on issue #${ISSUE_NUMBER} listing the created issues with links, and set the sdd:issues-created label on issue #${ISSUE_NUMBER}."
+          opencode run \
+            --agent spec-to-issues \
+            --auto \
+            "Read issue #${ISSUE_NUMBER} and its full comment thread. Find the most recent !to-plan comment's approved plan and suggested vertical-slice issues, create the corresponding real issues on the tracker (each linked back with 'Part of #${ISSUE_NUMBER}' and labeled ready-for-agent), post a single summary comment on issue #${ISSUE_NUMBER} listing the created issues with links, and set the sdd:issues-created label on issue #${ISSUE_NUMBER}."

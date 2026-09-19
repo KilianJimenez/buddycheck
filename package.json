@@ -30,7 +30,7 @@
   },
   "devDependencies": {
     "@types/node": "^18",
-    "buddycheck": "^0.2.0",
+    "buddycheck": "^0.2.2",
     "tsup": "^8",
     "typescript": "^5",
     "vitest": "^3"

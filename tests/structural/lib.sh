@@ -11,7 +11,7 @@
 #   - Where agent docs live and what they're named (Copilot:
 #     .github/agents/<name>.agent.md; Opencode: .opencode/agent/<name>.md).
 #   - The repository secret used to authenticate the provider CLI (Copilot:
-#     COPILOT_CLI_TOKEN; Opencode: ANTHROPIC_API_KEY).
+#     COPILOT_CLI_TOKEN; Opencode: OPENCODE_ZEN_API_KEY).
 #   - How an agent declares its own name in frontmatter (Copilot: an explicit
 #     `name: <agent>` field; Opencode: the file's basename *is* the agent
 #     name, declared via a `description:` field instead).
@@ -39,7 +39,7 @@ init_provider_conventions() {
   if [ "$PROVIDER" = "opencode" ]; then
     AGENT_DIR="$root/.opencode/agent"
     AGENT_EXT=".md"
-    CLI_TOKEN_SECRET="ANTHROPIC_API_KEY"
+    CLI_TOKEN_SECRET="OPENCODE_ZEN_API_KEY"
   else
     AGENT_DIR="$root/.github/agents"
     AGENT_EXT=".agent.md"
